@@ -57,7 +57,7 @@ const enviarNotificacion = (req, res) => {
 
 app.route("/api/enviar-notificacion").post(enviarNotificacion);
 
-const httpServer = app.listen(9000, () => {
+const httpServer = app.listen(3000, () => {
   console.log(
     "HTTP Server running at http://localhost:" + httpServer.address().port
   );
