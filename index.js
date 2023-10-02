@@ -2,6 +2,9 @@ const webpush = require("web-push");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+require("dotenv").config();
+
+const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors());
@@ -20,25 +23,10 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
-const enviarNotificacion = (req, res) => {
-  console.log(req.body.data);
-  const pushSubscription = req.body.data;
+app.post("/api/enviar-notificacion", (req, res) => {
+  const pushSubscription = req.body.data.data;
 
-  const payload = {
-    notification: {
-      title: "😄😄 Saludos",
-      body: "Subscribete a mi canal de YOUTUBE",
-      vibrate: [100, 50, 100],
-      image:
-        "https://avatars2.githubusercontent.com/u/15802366?s=460&u=ac6cc646599f2ed6c4699a74b15192a29177f85a&v=4",
-      actions: [
-        {
-          action: "explore",
-          title: "Go to the site",
-        },
-      ],
-    },
-  };
+  const payload = req.body.data.payload;
 
   webpush
     .sendNotification(pushSubscription, JSON.stringify(payload))
@@ -53,11 +41,9 @@ const enviarNotificacion = (req, res) => {
     data: "Se envio subscribete!!",
     pushSubscription: pushSubscription,
   });
-};
+});
 
-app.route("/api/enviar-notificacion").post(enviarNotificacion);
-
-const httpServer = app.listen(3000, () => {
+const httpServer = app.listen(port, () => {
   console.log(
     "HTTP Server running at http://localhost:" + httpServer.address().port
   );
