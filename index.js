@@ -23,24 +23,23 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
-app.post("/api/enviar-notificacion", (req, res) => {
+app.post("/api/enviar-notificacion", async (req, res) => {
   const pushSubscription = req.body.data.data;
-
   const payload = req.body.data.payload;
 
-  webpush
-    .sendNotification(pushSubscription, JSON.stringify(payload))
-    .then((res) => {
-      console.log("Enviado !!");
-    })
-    .catch((err) => {
-      console.log("Error", err);
+  try {
+    await webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+    console.log("Enviado !!");
+    res.send({
+      data: "Se envió la notificación correctamente",
+      pushSubscription: pushSubscription,
     });
-
-  res.send({
-    data: "Se envio subscribete!!",
-    pushSubscription: pushSubscription,
-  });
+  } catch (err) {
+    console.error("Error", err);
+    res.status(500).send({
+      error: "Hubo un error al enviar la notificación",
+    });
+  }
 });
 
 const httpServer = app.listen(port, () => {
